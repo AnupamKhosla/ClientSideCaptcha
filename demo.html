@@ -1,0 +1,104 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Captcha | js</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">    
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        p.wrong {
+            display: none;
+        }
+        p.wrong.shake {
+            display: block;
+        }
+        .controls img {
+            height: 20px;
+        }
+
+    </style>
+    <!--[if lt IE 9]>
+            <script src="js/vendor/html5-3.6-respond-1.4.2.min.js"></script>
+        <![endif]-->
+</head>
+
+<body>
+    <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->   
+        
+        <div class="captcha-chat">
+            <div class="captcha-container media">            
+                
+                <div class="media-body">
+                    <p class="security">Security Check:</p>
+                    <p class="why-captcha">Just in case you are bot</p>
+                </div>                
+                <div id="captcha">
+                    <div class="controls">
+                        <input class="user-text btn-common" placeholder="Type here" type="text" />
+                        <button class="validate btn-common">
+                            <!-- this image should be converted into inline svg -->
+                            <img src="img/enter_icon.png" alt="submit icon">
+                        </button>
+                        <button class="refresh btn-common">
+                            <!-- this image should be converted into inline svg -->
+                            <img src="img/refresh_icon.png" alt="refresh icon">
+                        </button>
+                    </div>
+                </div>
+                <p class="wrong info">Wrong!, please try again.</p>                
+            </div>          
+        </div>
+       
+
+    </div>    
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous" defer></script>
+    
+    <script src="js/client_captcha.js" defer></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            document.body.scrollTop; //force css repaint to ensure cssom is ready
+            var captcha = new $.Captcha({
+                        onFailure: function() {
+
+                            $(".captcha-chat .wrong").show({
+                                duration: 30,
+                                done: function() {
+                                    var that = this;
+                                    clearTimeout(timeout);
+                                    $(this).removeClass("shake");
+                                    $(this).css("animation");
+                                    //Browser Reflow(repaint?): hacky way to ensure removal of css properties after removeclass
+                                    $(this).addClass("shake");
+                                    var time = parseFloat($(this).css("animation-duration")) * 1000;
+                                    timeout = setTimeout(function() {
+                                        $(that).removeClass("shake");
+                                    }, time);
+                                }
+                            });
+
+                        },
+
+                        onSuccess: function() {
+                           alert("CORRECT!!!");
+                        }
+                    });
+
+                    captcha.generate();
+        });
+    </script>
+    
+</body>
+</html>
