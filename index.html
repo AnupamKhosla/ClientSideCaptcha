@@ -14,18 +14,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="favicon.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">    
-    <link rel="stylesheet" href="css/main.css">
     <style>
-        p.wrong {
-            display: none;
+    p.wrong {
+        display: none;
+    }
+    
+    p.wrong.shake {
+        display: block;
+    }
+    
+    p.wrong.shake {
+        animation: shake .4s cubic-bezier(.36, .07, .19, .97) both;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+    }
+    
+    @keyframes shake {
+        10%,
+        90% {
+            transform: translate3d(-1px, 0, 0);
         }
-        p.wrong.shake {
-            display: block;
+        20%,
+        80% {
+            transform: translate3d(1px, 0, 0);
         }
-        .controls img {
-            height: 20px;
+        30%,
+        50%,
+        70% {
+            transform: translate3d(-2px, 0, 0);
         }
-
+        40%,
+        60% {
+            transform: translate3d(2px, 0, 0);
+        }
+    }
+    
+    .controls img {
+        height: 20px;
+    }
     </style>
     <!--[if lt IE 9]>
             <script src="js/vendor/html5-3.6-respond-1.4.2.min.js"></script>
@@ -35,70 +62,66 @@
 <body>
     <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->   
-        
-        <div class="captcha-chat">
-            <div class="captcha-container media">            
-                
-                <div class="media-body">
-                    <p class="security">Security Check:</p>
-                    <p class="why-captcha">Just in case you are bot</p>
-                </div>                
-                <div id="captcha">
-                    <div class="controls">
-                        <input class="user-text btn-common" placeholder="Type here" type="text" />
-                        <button class="validate btn-common">
-                            <!-- this image should be converted into inline svg -->
-                            <img src="img/enter_icon.png" alt="submit icon">
-                        </button>
-                        <button class="refresh btn-common">
-                            <!-- this image should be converted into inline svg -->
-                            <img src="img/refresh_icon.png" alt="refresh icon">
-                        </button>
-                    </div>
+        <![endif]-->
+    <div class="captcha-chat">
+        <div class="captcha-container media">
+            <div class="media-body">
+                <p class="security">Security Check:</p>                
+            </div>
+            <div id="captcha">
+                <div class="controls">
+                    <input class="user-text btn-common" placeholder="Type here" type="text" />
+                    <button class="validate btn-common">
+                        <!-- this image should be converted into inline svg -->
+                        <img src="img/enter_icon.png" alt="submit icon">
+                    </button>
+                    <button class="refresh btn-common">
+                        <!-- this image should be converted into inline svg -->
+                        <img src="img/refresh_icon.png" alt="refresh icon">
+                    </button>
                 </div>
-                <p class="wrong info">Wrong!, please try again.</p>                
-            </div>          
+            </div>
+            <p class="wrong info">Wrong!, please try again.</p>
         </div>
-       
-
-    </div>    
+    </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous" defer></script>
-    
     <script src="js/client_captcha.js" defer></script>
-
     <script>
-        document.addEventListener("DOMContentLoaded", function(){
-            document.body.scrollTop; //force css repaint to ensure cssom is ready
-            var captcha = new $.Captcha({
-                        onFailure: function() {
+    document.addEventListener("DOMContentLoaded", function() {
+        document.body.scrollTop; //force css repaint to ensure cssom is ready
 
-                            $(".captcha-chat .wrong").show({
-                                duration: 30,
-                                done: function() {
-                                    var that = this;
-                                    clearTimeout(timeout);
-                                    $(this).removeClass("shake");
-                                    $(this).css("animation");
-                                    //Browser Reflow(repaint?): hacky way to ensure removal of css properties after removeclass
-                                    $(this).addClass("shake");
-                                    var time = parseFloat($(this).css("animation-duration")) * 1000;
-                                    timeout = setTimeout(function() {
-                                        $(that).removeClass("shake");
-                                    }, time);
-                                }
-                            });
+        var timeout; //global timout variable that holds reference to timer
 
-                        },
+        var captcha = new $.Captcha({
+            onFailure: function() {
 
-                        onSuccess: function() {
-                           alert("CORRECT!!!");
-                        }
-                    });
+                $(".captcha-chat .wrong").show({
+                    duration: 30,
+                    done: function() {
+                        var that = this;
+                        clearTimeout(timeout);
+                        $(this).removeClass("shake");
+                        $(this).css("animation");
+                        //Browser Reflow(repaint?): hacky way to ensure removal of css properties after removeclass
+                        $(this).addClass("shake");
+                        var time = parseFloat($(this).css("animation-duration")) * 1000;
+                        timeout = setTimeout(function() {
+                            $(that).removeClass("shake");
+                        }, time);
+                    }
+                });
 
-                    captcha.generate();
+            },
+
+            onSuccess: function() {
+                alert("CORRECT!!!");
+            }
         });
+
+        captcha.generate();
+    });
     </script>
-    
 </body>
+
 </html>
